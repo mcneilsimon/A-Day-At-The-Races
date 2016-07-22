@@ -24,7 +24,7 @@
             <Image x:Name="_imgRacingHound4" Height="40" Width="112" Canvas.Left="20" Canvas.Top="337" Source="Assets/dog.png" RenderTransformOrigin="0.467,0.783"/>
         </Canvas>
         <TextBlock x:Name="lblTitle" HorizontalAlignment="Left" Grid.Row="1" TextWrapping="Wrap" Text="Betting Parlor" VerticalAlignment="Center" FontSize="36" FontFamily="Segoe UI Semibold" Margin="0,10,0,0"/>
-        <Grid Grid.Row="2" Padding="0,6">
+        <Grid Grid.Row="2" Padding="0,6" Margin="0,0,10,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="271*"/>
                 <ColumnDefinition Width="734*"/>

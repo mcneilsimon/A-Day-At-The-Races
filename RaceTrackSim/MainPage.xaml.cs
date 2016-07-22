@@ -75,7 +75,7 @@ namespace RaceTrackSim
             //at a given time interval
             _tmRaceTimer = new DispatcherTimer();
             _tmRaceTimer.Tick += OnRaceTimerTick;
-            _tmRaceTimer.Interval = TimeSpan.FromMilliseconds(100); //TODO: define a constant field variable for 100 and use it here
+            _tmRaceTimer.Interval = TimeSpan.FromMilliseconds(25); //TODO: define a constant field variable for 100 and use it here
 
             //create the randomizer for all objects of the form
             _formRandomizer = new Random();
@@ -214,20 +214,57 @@ namespace RaceTrackSim
         /// <param name="e"></param>
         private async void OnPlaceBet(object sender, RoutedEventArgs e)
         {
-            //Obtain the bet amount
-            int betAmount = int.Parse(_txtBetAmount.Text);
-
-            //Determine the racer the bet is on
-            ComboBoxItem racerItem = _cmbRaceHoundNo.SelectedItem as ComboBoxItem;
-            int racerNo = int.Parse(racerItem.Content.ToString());
-            
-            //Ask the current bettor to place a bet
-            if (_crtSelBettor.PlaceBet(betAmount, racerNo) == false)
+            try
             {
-                MessageDialog msgDlg = new MessageDialog($"{_crtSelBettor.Name} does not have enough money to place this bet.",
-                                                            "Race Track Simulator");
+                //Obtain the bet amount
+                int betAmount = int.Parse(_txtBetAmount.Text);
+
+                //Determine the racer the bet is on
+                ComboBoxItem racerItem = _cmbRaceHoundNo.SelectedItem as ComboBoxItem;
+                int racerNo = int.Parse(racerItem.Content.ToString());
+
+                //Ask the current bettor to place a bet
+
+                int switchValue = _crtSelBettor.PlaceBet(betAmount, racerNo);
+
+                switch (switchValue)
+                {
+
+                    case 0:
+                        throw new InvalidOperationException("Bet amount must be greater than or equal to 5");
+
+                    case 1:
+                        MessageDialog msgDlg = new MessageDialog($"{_crtSelBettor.Name} does not have enough money to place this bet.",
+                                                               "Race Track Simulator");
+                        await msgDlg.ShowAsync();
+                        break;
+
+                    case 2:
+                        break;                 
+                }
+            }
+
+            catch (InvalidOperationException ioEx)
+            {
+                _txtBetAmount.Text = "N/A";
+                MessageDialog msgDlg = new MessageDialog(ioEx.Message);
                 await msgDlg.ShowAsync();
             }
+
+            catch (FormatException)
+            {
+                _txtBetAmount.Text = "N/A";
+
+                MessageDialog msgDlg = new MessageDialog("Invalid Input\nPlease enter a certain amount of money within your balanace.");
+                await msgDlg.ShowAsync();
+            }
+
+            catch (NullReferenceException)
+            {
+                MessageDialog msgDlg = new MessageDialog("Please select a better and place a bet before placing bets");
+                await msgDlg.ShowAsync();
+            }
+
         }
 
         /// <summary>
@@ -236,16 +273,31 @@ namespace RaceTrackSim
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void OnStartRace(object sender, RoutedEventArgs e)
+        private async void OnStartRace(object sender, RoutedEventArgs e)
         {
-           //initialize the racing attributes of each racer            
-            foreach (Greyhound racer in _raceHoundList)
+            try
             {
-                racer.TakeStartingPosition();
+                if(_bettorList[0].HasPlacedBet || _bettorList[1].HasPlacedBet || _bettorList[2].HasPlacedBet)
+                {
+                    foreach (Greyhound racer in _raceHoundList)
+                    {
+                        racer.TakeStartingPosition();
+                    }
+                    _tmRaceTimer.Start();
+                }
+
+                else
+                {
+                    throw new InvalidOperationException("Place at least one bet before starting the race");
+                }
+            
             }
 
-            //start the race timer to get the race hounds moving
-            _tmRaceTimer.Start();
+            catch (InvalidOperationException ioEx)
+            {
+                MessageDialog msgDlg = new MessageDialog(ioEx.Message);
+                await msgDlg.ShowAsync();
+            }
         }
 
         /// <summary>

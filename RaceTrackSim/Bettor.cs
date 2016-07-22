@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -88,10 +89,22 @@ namespace RaceTrackSim
         ///     - true: if the bettor has enough money to place to bet
         ///     - false: if the bettor doesn't have enough money and cannot place the bet
         /// </returns>
-        public bool PlaceBet(int betAmount, int houndToWin)
+        public int PlaceBet(int betAmount, int houndToWin)
         {
             //if the bettor has enough money place the bet
-            if (betAmount <= _cash)
+
+            if (betAmount < 5)
+            {
+                //the bettor doesn't have enough money
+                return 0;
+            }
+
+            else if(betAmount > _cash)
+            {
+                return 1;
+            }
+
+            else if (betAmount <= _cash)
             {
                 //Place a new bet and store it in the _bet field variable
                 _bet = new Bet(betAmount, houndToWin, this);
@@ -100,12 +113,13 @@ namespace RaceTrackSim
                 UpdateLabels();
 
                 //inform the caller that the bet was placed
-                return true;
-            }
+                return 2;
+            }     
+
             else
             {
-                //the bettor doesn't have enough money
-                return false;
+                Debug.Assert(false, "Unexpected errror occured");
+                return -1;
             }
         }
 
