@@ -232,11 +232,11 @@ namespace RaceTrackSim
 
                     case 0:
                         throw new InvalidOperationException("Bet amount must be greater than or equal to 5");
+                        break;
 
                     case 1:
-                        MessageDialog msgDlg = new MessageDialog($"{_crtSelBettor.Name} does not have enough money to place this bet.",
-                                                               "Race Track Simulator");
-                        await msgDlg.ShowAsync();
+
+                        throw new InsufficientFundsException($"{_crtSelBettor.Name} does not have enough money to place this bet.");
                         break;
 
                     case 2:
@@ -244,10 +244,10 @@ namespace RaceTrackSim
                 }
             }
 
-            catch (InvalidOperationException ioEx)
+            catch (InsufficientFundsException ifEx)
             {
                 _txtBetAmount.Text = "N/A";
-                MessageDialog msgDlg = new MessageDialog(ioEx.Message);
+                MessageDialog msgDlg = new MessageDialog(ifEx.Message);
                 await msgDlg.ShowAsync();
             }
 
@@ -273,7 +273,7 @@ namespace RaceTrackSim
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private async void OnStartRace(object sender, RoutedEventArgs e)
+        private async void OnStartRace(object sender, RoutedEventArgs e) 
         {
             try
             {

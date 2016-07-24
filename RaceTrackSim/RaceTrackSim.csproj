@@ -99,6 +99,7 @@
     <Compile Include="Bet.cs" />
     <Compile Include="Bettor.cs" />
     <Compile Include="Greyhound.cs" />
+    <Compile Include="InsufficientFundsException.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
