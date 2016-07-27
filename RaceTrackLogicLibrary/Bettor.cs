@@ -34,23 +34,23 @@ namespace RaceTrackLogicLibrary
         /// The UI control used to represent the bettor on the form
         /// TODO: PRESENTATION-TIER concern
         /// </summary>
-        private RadioButton _uiBettor;
+        
+        ///private RadioButton _uiBettor;
 
         /// <summary>
         /// The UI control used to show the bet amount this bettor is placing
         /// TODO: PRESENTATION-TIER concern
         /// </summary>
-        private TextBlock _uiBetDesc;
+        //private TextBlock _uiBetDesc;
 
-        public Bettor(string name, int cash, RadioButton uiBettor, TextBlock uiBetDesc)
+        public Bettor(string name, int cash)
         {
             _name = name;
-            _bet = new Bet(0, 0, this); //TODO: the bet should not be created here as there is no info but the author assumes that
             _cash = cash;
 
             //TODO: PRESENTATION - TIER concern
-            _uiBettor = uiBettor;
-            _uiBetDesc = uiBetDesc;
+            //_uiBettor = uiBettor;
+            //_uiBetDesc = uiBetDesc;
         }
 
         /// <summary>
@@ -62,20 +62,36 @@ namespace RaceTrackLogicLibrary
             set { _name = value; }
         }
 
-        public Bet Bet
+        public int Cash
         {
-            get { return _bet; }
+            get { return _cash; }
+            set { _cash = value; }
         }
 
+
         public bool HasPlacedBet
-        {
-            get { return _bet.Amount > 0;  }
+        {         
+            get
+            {
+                if (_bet == null)
+                {
+                    return false;
+                }
+                else
+                {
+                    return _bet.Amount > 0;
+                }
+            }
+           
         }
         /// <summary>
         /// Clears the bet so that it's set to zero
         /// </summary>
         public void ClearBet()
         {
+            _bet = new Bet(0,0,this); 
+
+
             //reset the bet value to zero
         }
 
@@ -99,7 +115,7 @@ namespace RaceTrackLogicLibrary
                 return 0;
             }
 
-            else if(betAmount > _cash)
+            else if (betAmount > _cash)
             {
                 return 1;
             }
@@ -110,18 +126,18 @@ namespace RaceTrackLogicLibrary
                 _bet = new Bet(betAmount, houndToWin, this);
 
                 //update the UI
-                UpdateLabels();
+                //UpdateLabels();
 
                 //inform the caller that the bet was placed
                 return 2;
-            }     
+            }
 
             else
             {
                 Debug.Assert(false, "Unexpected errror occured");
                 return -1;
             }
-        }
+        }   
 
         /// <summary>
         /// Collects the money won from the bet, clears the bet and 
@@ -132,27 +148,8 @@ namespace RaceTrackLogicLibrary
         {
             //Ask the bet to pay out and update the cash of this bettor
             _cash += _bet.PayOut(winnerHound);
-
-            //Clear the bet
-            _bet = new Bet(0, 0, this); //TODO: the bet should not be created here as there is no info but the author assumes that
-
-            //Update the UI (TODO: PRESENTATION-TIER concern)
-            UpdateLabels();
-        }
-
-        /// <summary>
-        /// Updates the UI with the name of the bettor and the description of its bet
-        /// </summary>
-        public void UpdateLabels()
-        {
-            //set the label to the bet's description; assumes a bet object exists with zero value even
-            //when the bettor hasn't placed a bet. Not the best design but that's what the requirements
-            //of the lab are (TODO: Fix this)
-            _uiBetDesc.Text = _bet.GetDescription();
+            ClearBet();
             
-            //set the radio button to show the bettor
-            _uiBettor.Content = $"{_name} has {_cash} bucks";
         }
-
     }
 }

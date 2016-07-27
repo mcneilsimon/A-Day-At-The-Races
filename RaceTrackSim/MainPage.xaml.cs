@@ -53,6 +53,12 @@ namespace RaceTrackSim
         /// </summary>
         private Bettor _crtSelBettor;
 
+
+        private TextBlock _uiBetDesc;
+
+
+        private RadioButton _uiBettor;
+
         /// <summary>
         /// The minimum bet value allowed in the program
         /// </summary>
@@ -150,21 +156,27 @@ namespace RaceTrackSim
             _bettorList = new List<Bettor>();
 
             //create the three bettor objects and initialize their properties
-            _bettorList.Add(new Bettor("Joe", 50, _rbtnBettor1, _txtBet1));
-            _bettorList.Add(new Bettor("Bob", 75, _rbtnBettor2, _txtBet2));
-            _bettorList.Add(new Bettor("Anna", 45, _rbtnBettor3, _txtBet3));
+            _bettorList.Add(new Bettor("Joe", 50));
+            _bettorList.Add(new Bettor("Bob", 75));
+            _bettorList.Add(new Bettor("Anna", 45));
 
             //initialize the minimum bet label as required using the minimum value for the
             //bet value control
             _txtMinBet.Text = $"Minimum bet is {MIN_BET_VALUE} dollars.";
 
-            //update all the bettor information
-            foreach (Bettor bettor in _bettorList)
-            {
-                bettor.UpdateLabels();
-            }
-        }
+            //update all the bettor information to initial value 
+            _txtBet1.Text = DetermineBetDescUi(_bettorList[0]).Text;
+            _txtBet2.Text = DetermineBetDescUi(_bettorList[1]).Text;
+            _txtBet3.Text = DetermineBetDescUi(_bettorList[2]).Text;
 
+            //update all bettor information to inital cash value
+            foreach(Bettor bettorUI in _bettorList)
+            {
+                DetermineBettorUi(bettorUI);
+            }
+
+        }
+        
         /// <summary>
         /// Event handler when the user selects the current bettor using one of the
         /// three radio buttons. The same event handler is shared by all three radio 
@@ -200,12 +212,6 @@ namespace RaceTrackSim
             //use the current bettor information to display the bet information
             _txtCrtBettorName.Text = $"{_crtSelBettor.Name} bets";
 
-            //use a conditional expression rather an an if/else statement to determine the bet amount (https://msdn.microsoft.com/en-us/library/ty67wk28.aspx)
-            int betAmount = _crtSelBettor.HasPlacedBet ? _crtSelBettor.Bet.Amount : MIN_BET_VALUE;
-            _txtBetAmount.Text = betAmount.ToString();
-
-            //show the racer the selected bettor has bet on if any (combo box items start at 0 so #RACER HOUND - 1
-            _cmbRaceHoundNo.SelectedIndex = _crtSelBettor.HasPlacedBet ? _crtSelBettor.Bet.RaceHound - 1 : -1;
         }
 
         /// <summary>
@@ -234,15 +240,16 @@ namespace RaceTrackSim
 
                     case 0:
                         throw new InvalidOperationException("Bet amount must be greater than or equal to 5");
-                        break;
+
 
                     case 1:
 
                         throw new InsufficientFundsException($"{_crtSelBettor.Name} does not have enough money to place this bet.");
-                        break;
+             
 
                     case 2:
-                        break;                 
+                        UpdateBettorLabels(_crtSelBettor);
+                        break;              
                 }
             }
 
@@ -345,16 +352,103 @@ namespace RaceTrackSim
                         if (bettor.HasPlacedBet)
                         {
                             bettor.Collect(racerNo);
-                        }
-                    }
+                            DetermineBettorUi(bettor);
 
-                    //TODO: What happens if there is a tie? Debug through this scenario and 
-                    //plan and/or implement a good and fair solution
+                            bettor.ClearBet();
+
+                            if(bettor.Name == "Joe")
+                            {
+                                _txtBet1.Text = DetermineBetDescUi(bettor).Text;
+                            }
+                            else if(bettor.Name == "Bob")
+                            {
+                                _txtBet2.Text = DetermineBetDescUi(bettor).Text;
+                            }
+                            else if(bettor.Name == "Anna")
+                            {
+                                _txtBet3.Text = DetermineBetDescUi(bettor).Text;
+                            }
+
+                            else
+                            {
+                                Debug.Assert(false, "Unexpected bettor selector control. Cannot select the current bettor");
+                                return;
+                            }
+
+                        }
+                   
+                    }
                     break;
                 }
             }
         }
 
+        private TextBlock DetermineBetDescUi(Bettor bettor)
+        { 
+            _uiBetDesc = new TextBlock();
+
+            if(bettor.HasPlacedBet == true)
+            {
+                _uiBetDesc.Text = $"{bettor.Name} bets {_txtBetAmount.Text}$ on dog #{_cmbRaceHoundNo.SelectedIndex+1}";
+                return _uiBetDesc;
+            }
+
+            {
+                _uiBetDesc.Text = $"{bettor.Name} hasn't placed a bet";
+                return _uiBetDesc;
+            }
+        }
+
+        private RadioButton DetermineBettorUi(Bettor bettor)
+        {
+
+            if ((bool)_rbtnBettor1.IsChecked || bettor.Name == "Joe")
+            {
+                _rbtnBettor1.Content = $"{bettor.Name} has {bettor.Cash} bucks";
+                _uiBettor = _rbtnBettor1;
+                return _uiBettor;
+            }
+
+            else if ((bool)_rbtnBettor2.IsChecked || bettor.Name == "Bob")
+            {
+                _rbtnBettor2.Content = $"{bettor.Name} has {bettor.Cash} bucks";
+                _uiBettor = _rbtnBettor2;
+                return _uiBettor;
+            }
+
+            else if ((bool)_rbtnBettor3.IsChecked || bettor.Name == "Anna")
+            {
+                _rbtnBettor3.Content = $"{bettor.Name} has {bettor.Cash} bucks";
+                return _uiBettor = _rbtnBettor3;
+            }
+
+            else
+            {
+                Debug.Assert(false, "Unexpected bettor selector control. Cannot select the current bettor");
+                return null;
+            }
+        }
+
+        private void UpdateBettorLabels(Bettor bettor)
+        {
+
+            RadioButton radioBettor = DetermineBettorUi(bettor);
+
+            if (radioBettor == _rbtnBettor1)
+            {
+                _txtBet1.Text = DetermineBetDescUi(bettor).Text;
+            }
+
+            else if(radioBettor == _rbtnBettor2)
+            {
+                _txtBet2.Text = DetermineBetDescUi(bettor).Text;
+            }
+
+            else if(radioBettor == _rbtnBettor3)
+            {
+                _txtBet3.Text = DetermineBetDescUi(bettor).Text;
+            }
+        }     
         /// <summary>
         /// Event handler called when the user selects a race hound to place a bet on. Used to
         /// enable or disable the Place Bet button depending on whether an actual race hound
