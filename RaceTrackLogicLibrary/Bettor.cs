@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.UI.Xaml.Controls;
 
-namespace RaceTrackSim
+namespace RaceTrackLogicLibrary
 {
     /// <summary>
     /// Represents a client of the betting parlor, placing bets on race hounds winning the race.

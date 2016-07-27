@@ -14,6 +14,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using RaceTrackLogicLibrary;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -221,6 +222,7 @@ namespace RaceTrackSim
 
                 //Determine the racer the bet is on
                 ComboBoxItem racerItem = _cmbRaceHoundNo.SelectedItem as ComboBoxItem;
+               
                 int racerNo = int.Parse(racerItem.Content.ToString());
 
                 //Ask the current bettor to place a bet
@@ -242,6 +244,13 @@ namespace RaceTrackSim
                     case 2:
                         break;                 
                 }
+            }
+
+            catch (InvalidOperationException ioEx)
+            {
+                _txtBetAmount.Text = "N/A";
+                MessageDialog msgDlg = new MessageDialog(ioEx.Message);
+                await msgDlg.ShowAsync();
             }
 
             catch (InsufficientFundsException ifEx)

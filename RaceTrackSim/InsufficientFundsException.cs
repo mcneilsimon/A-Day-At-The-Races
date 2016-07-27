@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.UI.Popups;
 
+
 namespace RaceTrackSim
 {
     class InsufficientFundsException : Exception

@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.UI.Xaml.Controls;
 
-namespace RaceTrackSim
+namespace RaceTrackLogicLibrary
 {
     /// <summary>
     /// Represents the racer which advances a random distance on the race track.

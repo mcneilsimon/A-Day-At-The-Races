@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RaceTrackSim
+namespace RaceTrackLogicLibrary
 {
     /// <summary>
     /// Represents the bet made by a bettor and determines the payout when the bet is a win
