@@ -1,19 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 using RaceTrackLogicLibrary;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
@@ -53,10 +43,15 @@ namespace RaceTrackSim
         /// </summary>
         private Bettor _crtSelBettor;
 
-
+        /// <summary>
+        /// The description of the bettor for the textblock
+        /// </summary>
         private TextBlock _uiBetDesc;
 
 
+        /// <summary>
+        /// Declares radiobutton of bettor and content
+        /// </summary>
         private RadioButton _uiBettor;
 
         /// <summary>
@@ -169,7 +164,7 @@ namespace RaceTrackSim
             _txtBet2.Text = DetermineBetDescUi(_bettorList[1]).Text;
             _txtBet3.Text = DetermineBetDescUi(_bettorList[2]).Text;
 
-            //update all bettor information to inital cash value
+            //update all bettor information to inital cash value for radioButton content
             foreach(Bettor bettorUI in _bettorList)
             {
                 DetermineBettorUi(bettorUI);
@@ -233,26 +228,30 @@ namespace RaceTrackSim
 
                 //Ask the current bettor to place a bet
 
+                //Calls PlaceBet method and returns an int value
                 int switchValue = _crtSelBettor.PlaceBet(betAmount, racerNo);
 
+                //Switch statements to determine exception error handling or to continue to update labels.
                 switch (switchValue)
                 {
 
+                    //Checks if bet is less than 5
                     case 0:
                         throw new InvalidOperationException("Bet amount must be greater than or equal to 5");
-
-
+                    
+                    //User defined exception that checks if the bettor has enough money
                     case 1:
 
                         throw new InsufficientFundsException($"{_crtSelBettor.Name} does not have enough money to place this bet.");
              
-
+                    //updates the bet labels changing bettor name and the amount they bet. Also says that a bettor has now placed a bet. 
                     case 2:
                         UpdateBettorLabels(_crtSelBettor);
                         break;              
                 }
             }
 
+            //The follwoing are the catch operators for the previous exception try statements
             catch (InvalidOperationException ioEx)
             {
                 _txtBetAmount.Text = "N/A";
@@ -291,10 +290,12 @@ namespace RaceTrackSim
         /// <param name="e"></param>
         private async void OnStartRace(object sender, RoutedEventArgs e) 
         {
+            //checks to see if one bettor has atleast placed a bet before running the program 
             try
             {
                 if(_bettorList[0].HasPlacedBet || _bettorList[1].HasPlacedBet || _bettorList[2].HasPlacedBet)
                 {
+                    //if one player has at least place one bet, loop will run
                     foreach (Greyhound racer in _raceHoundList)
                     {
                         racer.TakeStartingPosition();
@@ -345,10 +346,9 @@ namespace RaceTrackSim
                     {
                         //check whether the bettor has a bet to collect. The app works without it
                         //because the bettor has a bet with the amount zero on dog zero which doesn't
-                        //affect the calculation. Logically though we should not try to collect from
-                        //a bettor that has not placed a bet. This causes an actual problem with the 
-                        //final implementation where the _bet is set to null in the bettor when the
-                        //bettor doesn't have a bet
+                        //affect the calculation. We fix this issue in the HasPlacedBet method by
+                        //checking if the bettor HasPlacedAbit and if returns true then it collects 
+                        //bettors winnings or loosing 
                         if (bettor.HasPlacedBet)
                         {
                             bettor.Collect(racerNo);
@@ -374,19 +374,25 @@ namespace RaceTrackSim
                                 Debug.Assert(false, "Unexpected bettor selector control. Cannot select the current bettor");
                                 return;
                             }
-
-                        }
-                   
+                 
+                        }  
                     }
                     break;
                 }
             }
         }
 
+        /// <summary>
+        /// Checks Bet description and sets it to initial value when program runs
+        /// and then updates after a bettor has placed a bet
+        /// </summary>
+        /// <param name="bettor"></param>
+        /// <returns></returns>
         private TextBlock DetermineBetDescUi(Bettor bettor)
         { 
             _uiBetDesc = new TextBlock();
 
+            //checks if a bettor has placed a bet and then updates bettors label
             if(bettor.HasPlacedBet == true)
             {
                 _uiBetDesc.Text = $"{bettor.Name} bets {_txtBetAmount.Text}$ on dog #{_cmbRaceHoundNo.SelectedIndex+1}";
@@ -399,6 +405,13 @@ namespace RaceTrackSim
             }
         }
 
+        /// <summary>
+        /// updates radio buttons content
+        /// Checks which radio button content to update by checking bettors name 
+        /// or viewing which radio button has been clicked.
+        /// </summary>
+        /// <param name="bettor"></param>
+        /// <returns></returns>
         private RadioButton DetermineBettorUi(Bettor bettor)
         {
 
@@ -428,6 +441,11 @@ namespace RaceTrackSim
                 return null;
             }
         }
+
+        /// <summary>
+        /// the follwoing calls DetermineBettorUi and checks which radiobutton has been selected to update
+        /// it equivalent _txtBet label
+        /// </summary>
 
         private void UpdateBettorLabels(Bettor bettor)
         {

@@ -52,36 +52,6 @@ namespace RaceTrackLogicLibrary
             get { return _raceHound; }
         }
 
-        /// <summary>
-        /// Provides the description of the bet (TODO: PRESENTATION-TIER concern)
-        /// For example: "Joe bets 8$ on dog #4" or "Joe hasn't placed a bet"
-        /// </summary>
-        /// <returns></returns>
-        public string GetDescription()
-        {
-            //Determine the description of the bet based on how much cash was bet and which
-            //hound was the bet on
-            if (_amount > 0)
-            {
-                //specify the bet information, who bet how much on what
-                return $"{_bettor.Name} bets {_amount}$ on dog #{_raceHound}";
-            }
-            else
-            {
-                //if the amount is zero, no bet was placed and the descrition should specify that
-                return $"{_bettor.Name} hasn't placed a bet";
-            }
-        }
-
-        /// <summary>
-        /// Calculates the payout if the bet was successsful, if the bet was on the race hound
-        /// that won. 
-        /// </summary>
-        /// <param name="winnerNo">the number of the race hound that won the race</param>
-        /// <returns>
-        ///     - the amount that was bet is returned as the amount won
-        ///     - the negative of the amount bet is returned as the amount lost
-        /// </returns>
         public int PayOut(int winnerNo)
         {
             //check the winner and return the amount positive or negative depending on whether

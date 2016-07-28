@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Windows.UI.Xaml.Controls;
+﻿using System.Diagnostics;
 
 namespace RaceTrackLogicLibrary
 {
@@ -30,19 +24,12 @@ namespace RaceTrackLogicLibrary
         /// </summary>
         private int _cash;
 
-        /// <summary>
-        /// The UI control used to represent the bettor on the form
-        /// TODO: PRESENTATION-TIER concern
-        /// </summary>
-        
-        ///private RadioButton _uiBettor;
 
         /// <summary>
-        /// The UI control used to show the bet amount this bettor is placing
-        /// TODO: PRESENTATION-TIER concern
+        /// Constructor to initialize bettor name and initial cash
         /// </summary>
-        //private TextBlock _uiBetDesc;
-
+        /// <param name="name"></param>
+        /// <param name="cash"></param>
         public Bettor(string name, int cash)
         {
             _name = name;
@@ -68,7 +55,9 @@ namespace RaceTrackLogicLibrary
             set { _cash = value; }
         }
 
-
+        /// <summary>
+        /// Determines if user has placed a bet and returns true or false
+        /// </summary>
         public bool HasPlacedBet
         {         
             get
@@ -90,8 +79,6 @@ namespace RaceTrackLogicLibrary
         public void ClearBet()
         {
             _bet = new Bet(0,0,this); 
-
-
             //reset the bet value to zero
         }
 
@@ -124,10 +111,7 @@ namespace RaceTrackLogicLibrary
             {
                 //Place a new bet and store it in the _bet field variable
                 _bet = new Bet(betAmount, houndToWin, this);
-
-                //update the UI
-                //UpdateLabels();
-
+        
                 //inform the caller that the bet was placed
                 return 2;
             }
