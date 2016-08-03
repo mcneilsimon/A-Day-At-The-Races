@@ -34,10 +34,6 @@ namespace RaceTrackLogicLibrary
         {
             _name = name;
             _cash = cash;
-
-            //TODO: PRESENTATION - TIER concern
-            //_uiBettor = uiBettor;
-            //_uiBetDesc = uiBetDesc;
         }
 
         /// <summary>

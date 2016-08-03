@@ -164,6 +164,8 @@ namespace RaceTrackSim
             _txtBet2.Text = DetermineBetDescUi(_bettorList[1]).Text;
             _txtBet3.Text = DetermineBetDescUi(_bettorList[2]).Text;
 
+            
+
             //update all bettor information to inital cash value for radioButton content
             foreach(Bettor bettorUI in _bettorList)
             {
@@ -478,6 +480,16 @@ namespace RaceTrackSim
         {
             //Enable the Place Bet button if the user has selected a racer to bet on and disable it if not
             _btnPlaceBet.IsEnabled = (_cmbRaceHoundNo.SelectedItem != null);
+
+        }
+
+        public void OnRacerHoundAtStartPosition(Greyhound racehound, int location)
+        {
+
+        }
+
+        public void OnRaceHoundAdvance(Greyhound racehound, int location)
+        {
 
         }
     }
