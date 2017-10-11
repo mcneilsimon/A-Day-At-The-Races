@@ -13,7 +13,7 @@ namespace RaceTrackSim
 
         public InsufficientFundsException(string value) : base(value)
         {
-              
+                 
         }
 
     }

@@ -483,14 +483,5 @@ namespace RaceTrackSim
 
         }
 
-        public void OnRacerHoundAtStartPosition(Greyhound racehound, int location)
-        {
-
-        }
-
-        public void OnRaceHoundAdvance(Greyhound racehound, int location)
-        {
-
-        }
     }
 }

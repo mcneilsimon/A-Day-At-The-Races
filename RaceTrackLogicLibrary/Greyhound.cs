@@ -29,6 +29,12 @@ namespace RaceTrackLogicLibrary
         private double _location;
 
         /// <summary>
+        /// The UI element used to represent the race hound to the user, on the form.
+        /// TODO: PRESENTATION-TIER concern
+        /// </summary>
+        private Image _uiRaceHound;
+
+        /// <summary>
         /// The random number generator used to advance the race hound on the track
         /// using a random distance. All race hounds MUST share the same randomizer 
         /// object which is created and set by the form.By making it static we ensure
@@ -45,7 +51,7 @@ namespace RaceTrackLogicLibrary
             _startPosition = 0;
             _raceTrackLength = 0;
             _location = 0;
-            
+            _uiRaceHound = raceHoundUI;
         }
 
         /// <summary>
@@ -85,10 +91,6 @@ namespace RaceTrackLogicLibrary
             set { s_randomizer = value; }
         }
 
-        public OnRacerHoundAtStartPositionCallBack OnRaceHoundAtStartPosition { get; set; }
-
-        public OnRaceHoundAdvanceCallback OnRaceHoundAdvance { get; set; }
-
         /// <summary>
         /// Resets the position of the race hound to the start of the race
         /// </summary>
@@ -98,7 +100,7 @@ namespace RaceTrackLogicLibrary
             _location = 0;
 
             //... and position the Picture Box UI to starting position
-            OnRaceHoundAtStartPosition(this, _location);
+            Canvas.SetLeft(_uiRaceHound, _startPosition);
         }
 
         /// <summary>
@@ -112,6 +114,7 @@ namespace RaceTrackLogicLibrary
         public bool Run()
         {
             //assume we are not yet at the finish line
+            bool finishLineReached = false;
 
             //Calculate the number of spaces to move at random
             int distance = s_randomizer.Next(1, 10);
@@ -121,16 +124,17 @@ namespace RaceTrackLogicLibrary
             if (_location >= _raceTrackLength)
             {
                 _location = _raceTrackLength;
+                finishLineReached = true;
                
             }
 
-            OnRaceHoundAdvance(this, _location);
+            Canvas.SetLeft(_uiRaceHound, _startPosition + _location);
 
             //Update the position of the UI element, the picture box to reflect the new position
-            
+
 
             //return true if the racer reached the end of the track and false otherwise
-            return _location == _raceTrackLength;
+            return finishLineReached;
         }
     }
 }
